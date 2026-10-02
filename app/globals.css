@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/*
+ * Identidade Energy Power
+ * Paleta extraída da logo: preto, amarelo e um toque de vermelho.
+ */
+@theme {
+  --color-ink: #09090a;
+  --color-surface: #111113;
+  --color-raised: #19191c;
+  --color-line: #27272c;
+  --color-fg: #f5f5f4;
+  --color-muted: #a3a3ad;
+  --color-brand: #ffd60a;
+  --color-brand-strong: #ffc400;
+  --color-accent: #e5231b;
+  --color-whats: #25d366;
+
+  --font-sans: var(--ff-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--ff-display), "Arial Narrow", sans-serif;
+
+  --ease-out-quint: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --animate-float: float 7s ease-in-out infinite;
+  --animate-toast: toast-in 0.3s var(--ease-out-quint);
+  --animate-pop: pop 0.35s var(--ease-out-quint);
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+  @keyframes toast-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+  }
+  @keyframes pop {
+    40% {
+      transform: scale(1.25);
+    }
+  }
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 5.5rem;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--color-ink);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: var(--color-brand);
+    color: #000;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-brand);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  button,
+  [role="button"],
+  summary {
+    cursor: pointer;
+  }
+
+  /* Trava a rolagem do fundo quando um diálogo está aberto. */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+}
+
+@layer components {
+  /* Título de impacto: condensado, itálico, caixa alta. */
+  .display {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-style: italic;
+    text-transform: uppercase;
+    line-height: 0.92;
+    letter-spacing: -0.005em;
+  }
+
+  .eyebrow {
+    font-family: var(--font-display);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-size: 0.8125rem;
+    color: var(--color-brand);
+  }
+
+  /* Diálogos nativos (<dialog>): foco preso e Esc de graça. */
+  dialog.ep-dialog {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100dvh;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    opacity: 0;
+    transition:
+      opacity 0.2s ease,
+      overlay 0.25s allow-discrete,
+      display 0.25s allow-discrete;
+  }
+  dialog.ep-dialog[open] {
+    display: flex;
+    opacity: 1;
+  }
+  dialog.ep-dialog::backdrop {
+    background: rgb(0 0 0 / 0.65);
+    backdrop-filter: blur(3px);
+  }
+  dialog.ep-dialog > .ep-panel {
+    transform: var(--ep-from, translateY(8px));
+    transition: transform 0.3s var(--ease-out-quint);
+  }
+  dialog.ep-dialog[open] > .ep-panel {
+    transform: none;
+  }
+  @starting-style {
+    dialog.ep-dialog[open] {
+      opacity: 0;
+    }
+    dialog.ep-dialog[open] > .ep-panel {
+      transform: var(--ep-from, translateY(8px));
+    }
+  }
+
+  /* Entrada suave das seções (ver components/ui/Reveal.tsx). */
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+    transition:
+      opacity 0.6s var(--ease-out-quint),
+      transform 0.6s var(--ease-out-quint);
+    transition-delay: var(--reveal-delay, 0ms);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* Faixa de range do filtro de preço. */
+  input[type="range"].ep-range {
+    appearance: none;
+    width: 100%;
+    height: 1.5rem;
+    background: transparent;
+  }
+  input[type="range"].ep-range::-webkit-slider-runnable-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-line);
+  }
+  input[type="range"].ep-range::-moz-range-track {
+    height: 4px;
+    border-radius: 2px;
+    background: var(--color-line);
+  }
+  input[type="range"].ep-range::-webkit-slider-thumb {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    margin-top: -7px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    border: 3px solid var(--color-ink);
+    box-shadow: 0 0 0 1px var(--color-brand);
+  }
+  input[type="range"].ep-range::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--color-brand);
+    border: 3px solid var(--color-ink);
+    box-shadow: 0 0 0 1px var(--color-brand);
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: 82rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @media (min-width: 40rem) {
+    padding-inline: 1.5rem;
+  }
+  @media (min-width: 64rem) {
+    padding-inline: 2rem;
+  }
+}
+
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
